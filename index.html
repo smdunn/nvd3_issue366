@@ -67,27 +67,27 @@
             "values": []
           }, // % unemployed
             {
-            "key": "RCALLAALA9395",
+            "key": "RCALLAA1A9395",
             "values": []
           }, // Age-Adjusted Rate of Colon Cancer Mortality, All Races, All Ages, Female+Male, 1993-1995
             {
-            "key": "RCALLAALA9698",
+            "key": "RCALLAAlA9698",
             "values": []
           }, // Age-Adjusted Rate of Colon Cancer Mortality, All Races, All Ages, Female+Male, 1996-1998
             {
-            "key": "RCALLAALA9901",
+            "key": "RCALLAAlA9901",
             "values": []
           }, // Age-Adjusted Rate of Colon Cancer Mortality, All Races, All Ages, Female+Male, 1999-2001
             {
-            "key": "RLALLAALA9395",
+            "key": "RLALLAAlA9395",
             "values": []
           }, // Age-Adjusted Rate of Lung Cancer Mortality, All Races, All Ages, Female+Male, 1993-1995
             {
-            "key": "RLALLAALA9698",
+            "key": "RLALLAAlA9698",
             "values": []
           }, // Age-Adjusted Rate of Lung Cancer Mortality, All Races, All Ages, Female+Male, 1996-1999
             {
-            "key": "RLALLAALA9901",
+            "key": "RLALLAAlA9901",
             "values": []
           }// Age-Adjusted Rate of Lung Cancer Mortality, All Races, All Ages, Female+Male, 1999-2001
 
@@ -97,7 +97,7 @@
         console.log("there are " + csv.length + " elements in my csv set");
         csv.sort(function (a, b) { return a.length - b.length; });
 
-        var dataset = ["NAME", "STATE_NAME", "MALES", "FEMALES", "Noins", "hosp", "hosponc", "pcincome", "pctcoled", "pctpoor", "pctwhtcl", "unemploy", "RCALLAALA9395", "RCALLAALA9698", "RCALLAALA9901", "RLALLAALA9395", "RLALLAALA9698", "RLALLAALA9901"];
+        var dataset = data.map(function(d){return d.key});
         for (var i = 0; i < dataset.length; i++) {
           data[i].values = csv.map(function (d) {
             if (dataset[i] === "NAME") {
