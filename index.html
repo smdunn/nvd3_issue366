@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+    <meta charset="utf-8">
+    <title>The Multi-Visualization</title>
+    <link href="./nv.d3.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        #g1{
+            border: 2px solid black;
+            width: 100%;
+            height: 100%;
+            float: left;
+            -webkit-box-sizing:border-box;
+            -moz-box-sizing:border-box;
+            box-sizing:border-box;
+        }
+    </style>
+<body>
+    <script src="./d3.v3.js"></script>
+    <script src="./nv.d3.js"></script>
+    <script>
+      var data = [
+            {
+              "key": "NAME",
+              "values": []
+            },
+            {
+              "key": "STATE_NAME",
+              "values": []
+            },
+            {
+              "key": "MALES",
+              "values": []
+            }, //Population
+            {
+            "key": "FEMALES",
+            "values": []
+          }, //Population
+            {
+            "key": "Noins",
+            "values": []
+          }, // % of persons ages 18+ who do not have health plan or health insurance
+            {
+            "key": "hosp",
+            "values": []
+          }, // hospitals per 1000 pop
+            {
+            "key": "hosponc",
+            "values": []
+          }, // hospitals with oncology service per 1000 pop
+            {
+            "key": "pcincome",
+            "values": []
+          }, // per capita income
+            {
+            "key": "pctcoled",
+            "values": []
+          }, // % adults over 25 with 4+ years college education
+            {
+            "key": "pctpoor",
+            "values": []
+          }, // % living below federal poverty line
+            {
+            "key": "pctwhtcl",
+            "values": []
+          }, // adults employed in white collar jobs
+            {
+            "key": "unemploy",
+            "values": []
+          }, // % unemployed
+            {
+            "key": "RCALLAALA9395",
+            "values": []
+          }, // Age-Adjusted Rate of Colon Cancer Mortality, All Races, All Ages, Female+Male, 1993-1995
+            {
+            "key": "RCALLAALA9698",
+            "values": []
+          }, // Age-Adjusted Rate of Colon Cancer Mortality, All Races, All Ages, Female+Male, 1996-1998
+            {
+            "key": "RCALLAALA9901",
+            "values": []
+          }, // Age-Adjusted Rate of Colon Cancer Mortality, All Races, All Ages, Female+Male, 1999-2001
+            {
+            "key": "RLALLAALA9395",
+            "values": []
+          }, // Age-Adjusted Rate of Lung Cancer Mortality, All Races, All Ages, Female+Male, 1993-1995
+            {
+            "key": "RLALLAALA9698",
+            "values": []
+          }, // Age-Adjusted Rate of Lung Cancer Mortality, All Races, All Ages, Female+Male, 1996-1999
+            {
+            "key": "RLALLAALA9901",
+            "values": []
+          }// Age-Adjusted Rate of Lung Cancer Mortality, All Races, All Ages, Female+Male, 1999-2001
+
+        ];
+      d3.csv("USA_Cancer_Ob.csv", function (error, csv) {
+        if (error) return console.log("there was an error loading the csv:" + error);
+        console.log("there are " + csv.length + " elements in my csv set");
+        csv.sort(function (a, b) { return a.length - b.length; });
+
+        var dataset = ["NAME", "STATE_NAME", "MALES", "FEMALES", "Noins", "hosp", "hosponc", "pcincome", "pctcoled", "pctpoor", "pctwhtcl", "unemploy", "RCALLAALA9395", "RCALLAALA9698", "RCALLAALA9901", "RLALLAALA9395", "RLALLAALA9698", "RLALLAALA9901"];
+        for (var i = 0; i < dataset.length; i++) {
+          data[i].values = csv.map(function (d) {
+            if (dataset[i] === "NAME") {
+              return d[dataset[i]];
+            } else return +d[dataset[i]];
+          }
+            );
+        };
+
+        d3.select("#drop1")
+              .append("select")
+              .attr("id", "select1")
+              .on("change", function () {
+                drawChart(inputData(data));
+              })
+              .selectAll("option")
+              .data(dataset)
+              .enter()
+              .append("option")
+              .attr("value", function (d) { return d; })
+              .text(function (d) { return d; });
+
+        d3.select("#drop2")
+              .append("select")
+              .attr("id", "select2")
+              .on("change", function () {
+                drawChart(inputData(data));
+              })
+              .selectAll("option")
+              .data(dataset)
+              .enter()
+              .append("option")
+              .attr("value", function (d) { return d; })
+              .text(function (d) { return d; })
+      });
+
+      var chart;
+      nv.addGraph(function () {
+        chart = nv.models.scatterChart()
+                      .showDistX(true)
+                      .showDistY(true)
+                      .useVoronoi(true)
+                      .color(d3.scale.category10().range())
+                      .transitionDuration(300);
+        chart.xAxis.tickFormat(d3.format('.01f'));
+        chart.yAxis.tickFormat(d3.format('.01f'));
+        chart.tooltipContent(function (key, x, y, e, graph) {
+          return '<h3>' + e.point.name + '</h3>';
+        });
+
+      });
+
+      function drawChart(data) {
+        d3.select("#g1 svg")
+              .datum(data)
+              .call(chart);
+        nv.utils.windowResize(chart.update);
+        chart.dispatch.on('stateChange', function (e) { ('New State', JSON.stringify(e)); });
+        return chart;
+      }
+
+      function inputData(data) {
+        var output = [];
+        output.push({ values: [] });
+
+        key1 = d3.select("#select1").node().selectedIndex;
+        key2 = d3.select("#select2").node().selectedIndex;
+
+        data[key1].values.forEach(function (d, i) {
+          output[0].values.push({ name: data[0].values[i], x: d, y: data[key2].values[i] });
+        })
+
+
+        return output;
+      }
+    </script>
+    <div id="g1">
+        <div id="drop1"></div>
+        <div id="drop2"></div>
+        <svg></svg>
+    </div>
+</body>
